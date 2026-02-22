@@ -167,34 +167,38 @@ export const ConsultingForm = () => {
       dispatch({ type: "SUBMIT_START" });
 
       try {
-        const formData = new FormData();
-        state.photos.front.forEach((e) =>
-          formData.append("frontPhoto", e.file)
-        );
-        state.photos.sides.forEach((e) =>
-          formData.append("sidesPhoto", e.file)
-        );
-        state.photos.top.forEach((e) =>
-          formData.append("topPhoto", e.file)
-        );
-        state.photos.sample.forEach((e) =>
-          formData.append("samplePhoto", e.file)
-        );
-        formData.append(
-          "usesHairProducts",
-          String(state.usesHairProducts)
-        );
-        formData.append("prefersForehead", String(state.prefersForehead));
-        formData.append("code", code);
-
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const res = await fetch(`${apiUrl}/api/consulting/apply`, {
-          method: "POST",
-          body: formData,
-        });
 
-        if (!res.ok) {
-          throw new Error(`서버 오류가 발생했습니다. (${res.status})`);
+        // API가 설정되어 있으면 실제 전송
+        if (apiUrl && apiUrl !== "https://your-api-server.com") {
+          const formData = new FormData();
+          state.photos.front.forEach((e) =>
+            formData.append("frontPhoto", e.file)
+          );
+          state.photos.sides.forEach((e) =>
+            formData.append("sidesPhoto", e.file)
+          );
+          state.photos.top.forEach((e) =>
+            formData.append("topPhoto", e.file)
+          );
+          state.photos.sample.forEach((e) =>
+            formData.append("samplePhoto", e.file)
+          );
+          formData.append(
+            "usesHairProducts",
+            String(state.usesHairProducts)
+          );
+          formData.append("prefersForehead", String(state.prefersForehead));
+          formData.append("code", code);
+
+          const res = await fetch(`${apiUrl}/api/consulting/apply`, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!res.ok) {
+            throw new Error(`서버 오류가 발생했습니다. (${res.status})`);
+          }
         }
 
         dispatch({ type: "SUBMIT_SUCCESS" });
