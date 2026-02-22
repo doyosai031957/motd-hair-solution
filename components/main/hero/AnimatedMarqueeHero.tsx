@@ -7,18 +7,27 @@ import { cn } from "@/lib/utils";
 interface AnimatedMarqueeHeroProps {
   tagline: string;
   title: React.ReactNode;
+  subtitle?: string;
   description: string;
   ctaText: string;
   images: string[];
+  onCtaClick?: () => void;
   decorations?: React.ReactNode;
   className?: string;
 }
 
-const ActionButton = ({ children }: { children: React.ReactNode }) => (
+const ActionButton = ({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => (
   <motion.button
+    onClick={onClick}
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
-    className="mt-8 px-8 py-3 rounded-full bg-red-500 text-white font-semibold shadow-lg transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
+    className="mt-8 px-8 py-3 rounded-full bg-blue-500 text-white font-semibold shadow-lg transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
   >
     {children}
   </motion.button>
@@ -36,9 +45,11 @@ const FADE_IN_ANIMATION_VARIANTS: Variants = {
 export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   tagline,
   title,
+  subtitle,
   description,
   ctaText,
   images,
+  onCtaClick,
   decorations,
   className,
 }) => {
@@ -58,7 +69,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
         </div>
       )}
 
-      <div className="z-10 flex flex-col items-center">
+      <div className="z-10 flex flex-col items-center -translate-y-[10vh]">
         {/* Tagline */}
         <motion.div
           initial="hidden"
@@ -90,6 +101,21 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
                 </motion.span>
               ))
             : title}
+
+          {subtitle && (
+            <>
+              <br />
+              {subtitle.split(" ").map((word, i) => (
+                <motion.span
+                  key={`sub-${i}`}
+                  variants={FADE_IN_ANIMATION_VARIANTS}
+                  className="inline-block text-3xl md:text-5xl font-light tracking-widest text-muted-foreground"
+                >
+                  {word}&nbsp;
+                </motion.span>
+              ))}
+            </>
+          )}
         </motion.h1>
 
         {/* Description */}
@@ -110,7 +136,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           variants={FADE_IN_ANIMATION_VARIANTS}
           transition={{ delay: 0.6 }}
         >
-          <ActionButton>{ctaText}</ActionButton>
+          <ActionButton onClick={onCtaClick}>{ctaText}</ActionButton>
         </motion.div>
       </div>
 
@@ -119,7 +145,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
         <motion.div
           className="flex gap-4"
           animate={{
-            x: ["-100%", "0%"],
+            x: ["-50%", "0%"],
             transition: {
               ease: "linear",
               duration: 40,
