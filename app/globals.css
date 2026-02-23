@@ -5,7 +5,7 @@
   --foreground: #f0ede8;
   --border: rgba(255, 255, 255, 0.12);
   --card: rgba(255, 255, 255, 0.06);
-  --muted-foreground: #7a7570;
+  --muted-foreground: #b0ada8;
 }
 
 @theme inline {

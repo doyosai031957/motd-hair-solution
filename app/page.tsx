@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatedMarqueeHero } from "@/components/main/hero/AnimatedMarqueeHero";
 import { CodeModal } from "@/components/main/CodeModal";
+import { EventSection } from "@/components/main/EventSection";
 
 export default function Home() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function Home() {
         subtitle="Hair Consulting"
         description="그루밋 남성 헤어 무료 컨설팅 이벤트에 참여해보세요!"
         ctaText="무료 컨설팅 신청하기"
+        ctaLocked={true}
         onCtaClick={() => setIsModalOpen(true)}
         images={[
           "/images/133013132044.jpg",
@@ -33,6 +35,8 @@ export default function Home() {
           "/images/리젠트컷2.jpg",
         ]}
       />
+
+      <EventSection />
 
       <CodeModal
         isOpen={isModalOpen}

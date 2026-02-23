@@ -10,6 +10,7 @@ interface AnimatedMarqueeHeroProps {
   subtitle?: string;
   description: string;
   ctaText: string;
+  ctaLocked?: boolean;
   images: string[];
   onCtaClick?: () => void;
   decorations?: React.ReactNode;
@@ -19,19 +20,45 @@ interface AnimatedMarqueeHeroProps {
 const ActionButton = ({
   children,
   onClick,
+  locked = false,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
-}) => (
-  <motion.button
-    onClick={onClick}
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    className="mt-8 px-8 py-3 rounded-full bg-blue-500 text-white font-semibold shadow-lg transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-  >
-    {children}
-  </motion.button>
-);
+  locked?: boolean;
+}) => {
+  if (locked) {
+    return (
+      <div className="relative mt-8 overflow-hidden rounded-full border border-white/10 bg-white/5 cursor-not-allowed select-none">
+        {/* 채워지다 멈추는 파란 fill */}
+        <motion.div
+          className="absolute inset-0 rounded-full bg-blue-500"
+          animate={{ x: ["-100%", "-20%", "-20%", "-100%"] }}
+          transition={{
+            duration: 2.8,
+            times: [0, 0.55, 0.74, 1],
+            ease: ["easeOut", "linear", "easeIn"] as const,
+            repeat: Infinity,
+            repeatDelay: 0.2,
+          }}
+        />
+        <span className="relative z-10 block px-8 py-3 text-sm font-semibold text-white/40">
+          {children}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="mt-8 px-8 py-3 rounded-full bg-blue-500 text-white font-semibold shadow-lg transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+    >
+      {children}
+    </motion.button>
+  );
+};
 
 const FADE_IN_ANIMATION_VARIANTS: Variants = {
   hidden: { opacity: 0, y: 10 },
@@ -48,6 +75,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   subtitle,
   description,
   ctaText,
+  ctaLocked = false,
   images,
   onCtaClick,
   decorations,
@@ -105,13 +133,13 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           {subtitle && (
             <>
               <br />
-              {subtitle.split(" ").map((word, i) => (
+              {subtitle.split(" ").map((word, i, arr) => (
                 <motion.span
                   key={`sub-${i}`}
                   variants={FADE_IN_ANIMATION_VARIANTS}
                   className="inline-block text-3xl md:text-5xl font-light tracking-widest text-muted-foreground"
                 >
-                  {word}&nbsp;
+                  {word}{i < arr.length - 1 && "\u00A0"}
                 </motion.span>
               ))}
             </>
@@ -136,7 +164,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           variants={FADE_IN_ANIMATION_VARIANTS}
           transition={{ delay: 0.6 }}
         >
-          <ActionButton onClick={onCtaClick}>{ctaText}</ActionButton>
+          <ActionButton onClick={onCtaClick} locked={ctaLocked}>{ctaText}</ActionButton>
         </motion.div>
       </div>
 
