@@ -88,9 +88,9 @@ export const EventSection = () => {
   };
 
   return (
-    <section className="w-full bg-background px-4 py-16">
+    <section className="relative z-10 w-full bg-background px-4 -mt-[10vh] pb-16">
       {/* 섹션 헤더 */}
-      <div className="mx-auto max-w-md text-center mb-12">
+      <div className="mx-auto max-w-md text-center mb-8">
         <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase mb-2">
           Events
         </p>

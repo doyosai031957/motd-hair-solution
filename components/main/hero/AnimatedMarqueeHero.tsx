@@ -97,7 +97,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
         </div>
       )}
 
-      <div className="z-10 flex flex-col items-center -translate-y-[10vh]">
+      <div className="z-10 flex flex-col items-center -translate-y-[20vh]">
         {/* Tagline */}
         <motion.div
           initial="hidden"
@@ -169,7 +169,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
       </div>
 
       {/* Animated Image Marquee */}
-      <div className="absolute bottom-0 left-0 w-full h-1/3 md:h-2/5 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
+      <div className="absolute bottom-[10vh] left-0 w-full h-1/3 md:h-2/5 [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
         <motion.div
           className="flex gap-4"
           animate={{
