@@ -80,11 +80,28 @@ const fadeUp = {
 
 export const EventSection = () => {
   const [copied, setCopied] = useState(false);
+  const [inviteToast, setInviteToast] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(REFERRAL_CODE);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleInvite = async () => {
+    const shareText = `추천인 코드 : ${REFERRAL_CODE}\n앱을 다운로드 하고 무료로 헤어 컨설팅을 받아보세요!`;
+    const shareUrl = "https://linktr.ee/GROOMEET";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "GROOMEET", text: shareText, url: shareUrl });
+        return;
+      } catch { /* 사용자가 취소한 경우 무시 */ }
+    }
+
+    navigator.clipboard.writeText(`${shareUrl}\n\n${shareText}`);
+    setInviteToast(true);
+    setTimeout(() => setInviteToast(false), 2500);
   };
 
   return (
@@ -227,7 +244,10 @@ export const EventSection = () => {
 
         {/* 버튼 영역 */}
         <div className="flex flex-col gap-3 mt-6">
-          <button className="w-full py-3.5 rounded-2xl bg-blue-500/15 border border-blue-500/40 text-blue-400 text-sm font-semibold hover:bg-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2">
+          <button
+            onClick={handleInvite}
+            className="w-full py-3.5 rounded-2xl bg-blue-500/15 border border-blue-500/40 text-blue-400 text-sm font-semibold hover:bg-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
               <polyline points="16 6 12 2 8 6" />
@@ -240,6 +260,17 @@ export const EventSection = () => {
           </button>
         </div>
       </div>
+      {/* 초대 링크 복사 토스트 */}
+      {inviteToast && (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-foreground text-background text-sm font-semibold shadow-lg"
+        >
+          복사 완료! 친구를 초대해보세요!
+        </motion.div>
+      )}
     </section>
   );
 };

@@ -120,14 +120,14 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
         >
           {typeof title === "string"
             ? title.split(" ").map((word, i) => (
-                <motion.span
-                  key={i}
-                  variants={FADE_IN_ANIMATION_VARIANTS}
-                  className="inline-block"
-                >
-                  {word}&nbsp;
-                </motion.span>
-              ))
+              <motion.span
+                key={i}
+                variants={FADE_IN_ANIMATION_VARIANTS}
+                className="inline-block"
+              >
+                {word}&nbsp;
+              </motion.span>
+            ))
             : title}
 
           {subtitle && (

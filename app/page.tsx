@@ -1,14 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatedMarqueeHero } from "@/components/main/hero/AnimatedMarqueeHero";
-import { CodeModal } from "@/components/main/CodeModal";
 import { EventSection } from "@/components/main/EventSection";
 
 export default function Home() {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <main>
@@ -18,8 +15,8 @@ export default function Home() {
         subtitle="Hair Consulting"
         description="그루밋 남성 헤어 무료 컨설팅 이벤트에 참여해보세요!"
         ctaText="무료 컨설팅 신청하기"
-        ctaLocked={true}
-        onCtaClick={() => setIsModalOpen(true)}
+        ctaLocked={false}
+        onCtaClick={() => router.push("/apply")}
         images={[
           "/images/133013132044.jpg",
           "/images/20140902_4_16526.jpg",
@@ -37,15 +34,6 @@ export default function Home() {
       />
 
       <EventSection />
-
-      <CodeModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={(code) => {
-          setIsModalOpen(false);
-          router.push(`/apply?code=${encodeURIComponent(code)}`);
-        }}
-      />
     </main>
   );
 }
