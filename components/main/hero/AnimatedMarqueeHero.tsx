@@ -116,7 +116,8 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
             hidden: {},
             show: { transition: { staggerChildren: 0.1 } },
           }}
-          className="text-5xl md:text-7xl font-bold tracking-tighter text-foreground"
+          className="text-5xl md:text-7xl tracking-tighter text-foreground"
+          style={{ fontFamily: "Pretendard Variable, Pretendard, sans-serif", fontWeight: 900 }}
         >
           {typeof title === "string"
             ? title.split(" ").map((word, i) => (
@@ -137,7 +138,8 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
                 <motion.span
                   key={`sub-${i}`}
                   variants={FADE_IN_ANIMATION_VARIANTS}
-                  className="inline-block text-3xl md:text-5xl font-light tracking-widest text-muted-foreground"
+                  className="inline-block text-2xl md:text-4xl tracking-widest text-muted-foreground"
+                  style={{ fontFamily: "Pretendard Variable, Pretendard, sans-serif", fontWeight: 600 }}
                 >
                   {word}{i < arr.length - 1 && "\u00A0"}
                 </motion.span>

@@ -91,15 +91,22 @@ export const EventSection = () => {
   const handleInvite = async () => {
     const shareText = `추천인 코드 : ${REFERRAL_CODE}\n앱을 다운로드 하고 무료로 헤어 컨설팅을 받아보세요!`;
     const shareUrl = "https://linktr.ee/GROOMEET";
+    const fullText = `${shareUrl}\n\n${shareText}`;
 
-    if (navigator.share) {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: "GROOMEET", text: shareText, url: shareUrl });
+        await navigator.share({ text: fullText });
         return;
-      } catch { /* 사용자가 취소한 경우 무시 */ }
+      } catch {
+        // 사용자 취소 또는 지원 불가 시 fallback
+      }
     }
 
-    navigator.clipboard.writeText(`${shareUrl}\n\n${shareText}`);
+    try {
+      await navigator.clipboard.writeText(fullText);
+    } catch {
+      // clipboard API 미지원 시 무시
+    }
     setInviteToast(true);
     setTimeout(() => setInviteToast(false), 2500);
   };

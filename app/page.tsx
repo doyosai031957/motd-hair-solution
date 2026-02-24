@@ -13,7 +13,7 @@ export default function Home() {
         tagline="무료 헤어 컨설팅 신청"
         title="GROOMEET"
         subtitle="Hair Consulting"
-        description="그루밋 남성 헤어 무료 컨설팅 이벤트에 참여해보세요!"
+        description="친구 초대하고 무료 컨설팅 받기"
         ctaText="무료 컨설팅 신청하기"
         ctaLocked={false}
         onCtaClick={() => router.push("/apply")}
