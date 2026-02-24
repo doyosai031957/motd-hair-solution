@@ -25,18 +25,21 @@ export const PhotoUploadField = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files) return;
 
-    if (!file.type.startsWith("image/")) return;
+    const remaining = maxPhotos - previews.length;
+    const selected = Array.from(files).slice(0, remaining);
 
-    if (file.size > MAX_FILE_SIZE) {
-      alert("파일 크기는 10MB 이하여야 합니다.");
-      return;
+    for (const file of selected) {
+      if (!file.type.startsWith("image/")) continue;
+      if (file.size > MAX_FILE_SIZE) {
+        alert("파일 크기는 10MB 이하여야 합니다.");
+        continue;
+      }
+      const url = URL.createObjectURL(file);
+      onFileSelect(file, url);
     }
-
-    const url = URL.createObjectURL(file);
-    onFileSelect(file, url);
 
     if (inputRef.current) inputRef.current.value = "";
   };
@@ -65,6 +68,7 @@ export const PhotoUploadField = ({
         ref={inputRef}
         type="file"
         accept="image/*"
+        multiple
         onChange={handleChange}
         className="hidden"
       />
