@@ -263,13 +263,17 @@ export const EventSection = ({ unlocked = false }: { unlocked?: boolean }) => {
             </svg>
             친구 초대하기
           </button>
-          {unlocked && (
+          {unlocked ? (
             <Link
               href="/consulting"
               className="w-full py-3.5 rounded-2xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 active:scale-95 transition-all text-center block"
             >
               컨설팅지 확인하기
             </Link>
+          ) : (
+            <div className="w-full py-3.5 rounded-2xl bg-muted border border-border text-muted-foreground text-sm font-semibold text-center cursor-not-allowed opacity-50">
+              컨설팅지 확인하기
+            </div>
           )}
         </div>
       </div>
