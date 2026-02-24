@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const REFERRAL_CODE = "GROOMEET2025";
 
@@ -78,7 +79,7 @@ const fadeUp = {
   }),
 };
 
-export const EventSection = () => {
+export const EventSection = ({ unlocked = false }: { unlocked?: boolean }) => {
   const [copied, setCopied] = useState(false);
   const [inviteToast, setInviteToast] = useState(false);
 
@@ -262,9 +263,14 @@ export const EventSection = () => {
             </svg>
             친구 초대하기
           </button>
-          <button className="w-full py-3.5 rounded-2xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 active:scale-95 transition-all">
-            컨설팅지 확인하기
-          </button>
+          {unlocked && (
+            <Link
+              href="/consulting"
+              className="w-full py-3.5 rounded-2xl bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 active:scale-95 transition-all text-center block"
+            >
+              컨설팅지 확인하기
+            </Link>
+          )}
         </div>
       </div>
       {/* 초대 링크 복사 토스트 */}

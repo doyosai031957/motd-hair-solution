@@ -16,6 +16,7 @@ export default function Home() {
         description="친구 초대하고 무료 컨설팅 받기"
         ctaText="무료 컨설팅 신청하기"
         ctaLocked={false}
+        // 이거 false로 바꾼게 추천인코드 입력한 상태고 true가 입력하지 않은 상태
         onCtaClick={() => router.push("/apply")}
         images={[
           "/images/133013132044.jpg",
@@ -33,7 +34,10 @@ export default function Home() {
         ]}
       />
 
-      <EventSection />
+      <EventSection unlocked={!false} />
+      {/* unlocked: ctaLocked의 반대값. true면 컨설팅지 확인하기 버튼 표시 */}
+      {/* {ctaLocked={false} + unlocked={true} → 활성 상태} */}
+      {/* {ctaLocked={true} + unlocked={false} → 잠금 상태} */}
     </main>
   );
 }
