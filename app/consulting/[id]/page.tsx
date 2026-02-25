@@ -25,7 +25,8 @@ const MOCK_CUSTOMER: Record<
   {
     customerName: string;
     date: string;
-    images: string[];
+    userImages: string[]; // 유저 본인 사진 (정면, 정수리 등)
+    designImages: string[]; // 추구하는 디자인 사진
     usesHairProduct: boolean;
     prefersForehead: boolean;
   }
@@ -33,21 +34,24 @@ const MOCK_CUSTOMER: Record<
   "1": {
     customerName: "뿡순이",
     date: "2024-02-14",
-    images: [SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE],
+    userImages: [SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE],
+    designImages: [SAMPLE_IMAGE],
     usesHairProduct: true,
     prefersForehead: true,
   },
   "2": {
     customerName: "준혁이",
     date: "2024-02-14",
-    images: [SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE],
+    userImages: [SAMPLE_IMAGE, SAMPLE_IMAGE],
+    designImages: [SAMPLE_IMAGE, SAMPLE_IMAGE],
     usesHairProduct: true,
     prefersForehead: false,
   },
   "3": {
     customerName: "민수",
     date: "2024-02-15",
-    images: [SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE],
+    userImages: [SAMPLE_IMAGE, SAMPLE_IMAGE, SAMPLE_IMAGE],
+    designImages: [SAMPLE_IMAGE],
     usesHairProduct: false,
     prefersForehead: true,
   },
@@ -205,16 +209,44 @@ export default function ConsultingWritePage({
             </span>
           </div>
 
-          {/* 고객 헤어 사진 */}
+          {/* 유저 사진 */}
+          <div className="px-4 pb-1">
+            <span className="text-[12px] font-semibold text-[#64748b]">
+              유저사진
+            </span>
+          </div>
           <div className="scrollbar-hide flex gap-2 overflow-x-auto px-4 pb-3">
-            {customer.images.map((src, i) => (
+            {customer.userImages.map((src: string, i: number) => (
               <div
                 key={i}
                 className="relative aspect-[4/5] w-[28%] min-w-[100px] max-w-[140px] shrink-0 overflow-hidden rounded-xl bg-[#f1f5f9]"
               >
                 <Image
                   src={src}
-                  alt={`${customer.customerName} 헤어 사진 ${i + 1}`}
+                  alt={`${customer.customerName} 유저 사진 ${i + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 480px) 28vw, 140px"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* 추구하는 디자인 */}
+          <div className="px-4 pb-1">
+            <span className="text-[12px] font-semibold text-[#64748b]">
+              추구하는 디자인
+            </span>
+          </div>
+          <div className="scrollbar-hide flex gap-2 overflow-x-auto px-4 pb-3">
+            {customer.designImages.map((src: string, i: number) => (
+              <div
+                key={i}
+                className="relative aspect-[4/5] w-[28%] min-w-[100px] max-w-[140px] shrink-0 overflow-hidden rounded-xl bg-[#f1f5f9]"
+              >
+                <Image
+                  src={src}
+                  alt={`추구하는 디자인 ${i + 1}`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 480px) 28vw, 140px"
