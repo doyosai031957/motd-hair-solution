@@ -19,3 +19,12 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* 스크롤바 숨김 유틸리티 (사진 가로 스크롤 영역용) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
