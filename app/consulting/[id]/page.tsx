@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { use } from "react";
+import ImageLightbox from "../../components/ImageLightbox";
 
 /* ──────────────────────────────────────────────
  * TODO: API 연동 시 아래 샘플 데이터를 API 응답으로 교체
@@ -98,11 +99,16 @@ export default function ConsultingWritePage({
   const timerText = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   const isUrgent = remainingSeconds <= 5 * 60; // 5분 이하면 긴급 표시
 
-  const [consultingText, setConsultingText] = useState("");
+  const [estimatedPrice, setEstimatedPrice] = useState("");
+  const [consultingText, setConsultingText] = useState(
+    "추천 스타일 명칭 : ex) 리프컷\n예상 필요 시술 : ex) 다운펌\n분석 내용 : "
+  );
   const [attachedImages, setAttachedImages] = useState<
     { file: File; preview: string }[]
   >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
 
   /** 사진 첨부 핸들러 */
   const handleImageAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,14 +156,14 @@ export default function ConsultingWritePage({
   /* 존재하지 않는 ID 처리 */
   if (!customer) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f8fafc]">
+      <div className="flex min-h-screen items-center justify-center bg-[#0f172a]">
         <div className="text-center">
-          <p className="text-[15px] font-semibold text-[#475569]">
+          <p className="text-[15px] font-semibold text-[#cbd5e1]">
             존재하지 않는 컨설팅 요청입니다.
           </p>
           <Link
             href="/"
-            className="mt-4 inline-block text-[13px] font-medium text-[#3b82f6]"
+            className="mt-4 inline-block text-[13px] font-medium text-[#60a5fa]"
           >
             ← 목록으로 돌아가기
           </Link>
@@ -167,14 +173,14 @@ export default function ConsultingWritePage({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#0f172a]">
       <div className="mx-auto max-w-[480px] px-5 pb-8">
         {/* ── 상단 네비게이션 ── */}
-        <nav className="sticky top-0 z-10 -mx-5 bg-[#f8fafc]/95 px-5 pt-4 pb-3 backdrop-blur-sm">
+        <nav className="sticky top-0 z-10 -mx-5 bg-[#0f172a]/95 px-5 pt-4 pb-3 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#e2e8f0] active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-[#334155] active:scale-95"
             >
               <svg
                 width="20"
@@ -185,33 +191,33 @@ export default function ConsultingWritePage({
               >
                 <path
                   d="M12.5 15L7.5 10L12.5 5"
-                  stroke="#475569"
+                  stroke="#cbd5e1"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
             </Link>
-            <h1 className="text-[17px] font-bold text-[#0f172a]">
+            <h1 className="text-[17px] font-bold text-[#f1f5f9]">
               컨설팅지 작성
             </h1>
           </div>
         </nav>
 
         {/* ── 고객 정보 요약 ── */}
-        <section className="mt-4 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+        <section className="mt-4 overflow-hidden rounded-2xl border border-[#334155] bg-[#1e293b] shadow-[0_2px_12px_rgba(0,0,0,0.3)]">
           <div className="flex items-center justify-between px-4 pt-4 pb-3">
             <span className="rounded-full bg-[#3b82f6] px-3 py-[5px] text-[11px] font-bold tracking-wide text-white">
               {customer.customerName}
             </span>
-            <span className="text-[13px] font-medium text-[#94a3b8]">
+            <span className="text-[13px] font-medium text-[#64748b]">
               {customer.date}
             </span>
           </div>
 
           {/* 유저 사진 */}
           <div className="px-4 pb-1">
-            <span className="text-[12px] font-semibold text-[#64748b]">
+            <span className="text-[12px] font-semibold text-[#94a3b8]">
               유저사진
             </span>
           </div>
@@ -219,7 +225,8 @@ export default function ConsultingWritePage({
             {customer.userImages.map((src: string, i: number) => (
               <div
                 key={i}
-                className="relative aspect-[4/5] w-[28%] min-w-[100px] max-w-[140px] shrink-0 overflow-hidden rounded-xl bg-[#f1f5f9]"
+                className="relative aspect-[4/5] w-[28%] min-w-[100px] max-w-[140px] shrink-0 cursor-pointer overflow-hidden rounded-xl bg-[#334155]"
+                onClick={() => setLightbox({ images: customer.userImages, index: i })}
               >
                 <Image
                   src={src}
@@ -234,7 +241,7 @@ export default function ConsultingWritePage({
 
           {/* 추구하는 디자인 */}
           <div className="px-4 pb-1">
-            <span className="text-[12px] font-semibold text-[#64748b]">
+            <span className="text-[12px] font-semibold text-[#94a3b8]">
               추구하는 디자인
             </span>
           </div>
@@ -242,7 +249,8 @@ export default function ConsultingWritePage({
             {customer.designImages.map((src: string, i: number) => (
               <div
                 key={i}
-                className="relative aspect-[4/5] w-[28%] min-w-[100px] max-w-[140px] shrink-0 overflow-hidden rounded-xl bg-[#f1f5f9]"
+                className="relative aspect-[4/5] w-[28%] min-w-[100px] max-w-[140px] shrink-0 cursor-pointer overflow-hidden rounded-xl bg-[#334155]"
+                onClick={() => setLightbox({ images: customer.designImages, index: i })}
               >
                 <Image
                   src={src}
@@ -259,8 +267,8 @@ export default function ConsultingWritePage({
           <div className="flex gap-2 px-4 pb-4">
             <div
               className={`flex flex-1 items-center justify-center rounded-lg py-2 ${customer.usesHairProduct
-                ? "bg-[#eff6ff] text-[#3b82f6]"
-                : "bg-[#f1f5f9] text-[#94a3b8]"
+                ? "bg-[#1e3a5f] text-[#60a5fa]"
+                : "bg-[#0f172a] text-[#64748b]"
                 }`}
             >
               <span className="text-[12px] font-semibold sm:text-[13px]">
@@ -270,8 +278,8 @@ export default function ConsultingWritePage({
             </div>
             <div
               className={`flex flex-1 items-center justify-center rounded-lg py-2 ${customer.prefersForehead
-                ? "bg-[#eff6ff] text-[#3b82f6]"
-                : "bg-[#f1f5f9] text-[#94a3b8]"
+                ? "bg-[#1e3a5f] text-[#60a5fa]"
+                : "bg-[#0f172a] text-[#64748b]"
                 }`}
             >
               <span className="text-[12px] font-semibold sm:text-[13px]">
@@ -283,17 +291,17 @@ export default function ConsultingWritePage({
         </section>
 
         {/* ── 컨설팅 내용 입력 ── */}
-        <section className="mt-4 rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+        <section className="mt-4 rounded-2xl border border-[#334155] bg-[#1e293b] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.3)]">
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-[13px] font-bold text-[#0f172a]">
+            <label className="text-[13px] font-bold text-[#f1f5f9]">
               컨설팅 내용
             </label>
             {/* 남은 시간 표시 */}
             <span
               className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold tabular-nums ${
                 isUrgent
-                  ? "bg-[#fef2f2] text-[#ef4444]"
-                  : "bg-[#f1f5f9] text-[#64748b]"
+                  ? "bg-[#450a0a] text-[#ef4444]"
+                  : "bg-[#0f172a] text-[#94a3b8]"
               }`}
             >
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -318,15 +326,29 @@ export default function ConsultingWritePage({
           <textarea
             value={consultingText}
             onChange={(e) => setConsultingText(e.target.value)}
-            placeholder="사용자님에게 전달할 헤어 컨설팅 내용을 작성해주세요.&#10;&#10;예) 현재 헤어 스타일 분석, 추천 스타일, 관리 방법 등"
-            className="w-full resize-none rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-[14px] leading-[1.7] text-[#0f172a] outline-none transition-colors placeholder:text-[#94a3b8] focus:border-[#3b82f6] focus:bg-white"
+            placeholder=""
+            className="w-full resize-none rounded-xl border border-[#334155] bg-[#0f172a] px-4 py-3 text-[14px] leading-[1.7] text-[#f1f5f9] outline-none transition-colors placeholder:text-[#475569] focus:border-[#3b82f6] focus:bg-[#1e293b]"
             rows={8}
           />
         </section>
 
+        {/* ── 예상 가격 입력 ── */}
+        <section className="mt-4 rounded-2xl border border-[#334155] bg-[#1e293b] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.3)]">
+          <label className="mb-2 block text-[13px] font-bold text-[#f1f5f9]">
+            예상 가격
+          </label>
+          <input
+            type="text"
+            value={estimatedPrice}
+            onChange={(e) => setEstimatedPrice(e.target.value)}
+            placeholder="ex) 50,000원"
+            className="w-full rounded-xl border border-[#334155] bg-[#0f172a] px-4 py-3 text-[14px] text-[#f1f5f9] outline-none transition-colors placeholder:text-[#475569] focus:border-[#3b82f6] focus:bg-[#1e293b]"
+          />
+        </section>
+
         {/* ── 추천 헤어 디자인 사진 첨부 ── */}
-        <section className="mt-4 rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
-          <label className="mb-3 block text-[13px] font-bold text-[#0f172a]">
+        <section className="mt-4 rounded-2xl border border-[#334155] bg-[#1e293b] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.3)]">
+          <label className="mb-3 block text-[13px] font-bold text-[#f1f5f9]">
             추천 헤어 디자인
           </label>
 
@@ -335,7 +357,13 @@ export default function ConsultingWritePage({
             {attachedImages.map((img, i) => (
               <div
                 key={i}
-                className="group relative aspect-square w-[calc(33.333%-6px)] overflow-hidden rounded-xl bg-[#f1f5f9]"
+                className="group relative aspect-square w-[calc(33.333%-6px)] cursor-pointer overflow-hidden rounded-xl bg-[#334155]"
+                onClick={() =>
+                  setLightbox({
+                    images: attachedImages.map((a) => a.preview),
+                    index: i,
+                  })
+                }
               >
                 <Image
                   src={img.preview}
@@ -346,8 +374,11 @@ export default function ConsultingWritePage({
                 />
                 {/* 삭제 버튼 */}
                 <button
-                  onClick={() => handleRemoveImage(i)}
-                  className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveImage(i);
+                  }}
+                  className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white transition-opacity"
                 >
                   <svg
                     width="12"
@@ -369,7 +400,7 @@ export default function ConsultingWritePage({
             {/* 사진 추가 버튼 */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex aspect-square w-[calc(33.333%-6px)] flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#cbd5e1] bg-[#f8fafc] transition-colors hover:border-[#3b82f6] hover:bg-[#eff6ff] active:scale-[0.98]"
+              className="flex aspect-square w-[calc(33.333%-6px)] flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-[#475569] bg-[#0f172a] transition-colors hover:border-[#3b82f6] hover:bg-[#1e3a5f] active:scale-[0.98]"
             >
               <svg
                 width="24"
@@ -380,12 +411,12 @@ export default function ConsultingWritePage({
               >
                 <path
                   d="M12 5V19M5 12H19"
-                  stroke="#94a3b8"
+                  stroke="#64748b"
                   strokeWidth="2"
                   strokeLinecap="round"
                 />
               </svg>
-              <span className="text-[11px] font-medium text-[#94a3b8]">
+              <span className="text-[11px] font-medium text-[#64748b]">
                 사진 추가
               </span>
             </button>
@@ -409,12 +440,21 @@ export default function ConsultingWritePage({
           <button
             onClick={handleSubmit}
             disabled={!consultingText.trim()}
-            className="w-full rounded-xl bg-[#3b82f6] py-3.5 text-[15px] font-bold text-white shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all hover:bg-[#2563eb] active:scale-[0.98] disabled:bg-[#cbd5e1] disabled:shadow-none"
+            className="w-full rounded-xl bg-[#3b82f6] py-3.5 text-[15px] font-bold text-white shadow-[0_2px_8px_rgba(59,130,246,0.3)] transition-all hover:bg-[#2563eb] active:scale-[0.98] disabled:bg-[#334155] disabled:shadow-none"
           >
             보내기
           </button>
         </div>
       </div>
+
+      {/* 이미지 라이트박스 */}
+      {lightbox && (
+        <ImageLightbox
+          images={lightbox.images}
+          initialIndex={lightbox.index}
+          onClose={() => setLightbox(null)}
+        />
+      )}
     </div>
   );
 }
